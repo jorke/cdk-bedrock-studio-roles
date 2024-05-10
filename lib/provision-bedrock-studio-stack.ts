@@ -8,19 +8,21 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
     super(scope, id, props);
 
     const serviceRole = new iam.Role(this, 'BedrockStudioServiceRole', {
-      assumedBy: new iam.ServicePrincipal('datazone.amazonaws.com').withConditions({
-        "StringEquals": {
-          "aws:SourceAccount": this.account
-        },
-        "ForAllValues:StringLike": {
-          "aws:TagKeys": "datazone*"
-        }
-      })
+      assumedBy: new iam.ServicePrincipal('datazone.amazonaws.com')
+        .withConditions({
+          "StringEquals": {
+            "aws:SourceAccount": this.account
+          },
+          "ForAllValues:StringLike": {
+            "aws:TagKeys": "datazone*"
+          }
+        }).withSessionTags()
     })
 
     serviceRole.attachInlinePolicy(new iam.Policy(this, 'BedrockStudioServicePolicy', {
       statements: [
         new iam.PolicyStatement({
+          sid: "DomainExecutionRoleStatement",
           effect: iam.Effect.ALLOW,
           actions: [
             "datazone:GetDomain",
@@ -60,6 +62,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
           resources: ["*"],
         }),
         new iam.PolicyStatement({
+          sid: "RAMResourceShareStatement",
           effect: iam.Effect.ALLOW,
           actions: ["ram:GetresourceshareAssociations"],
           resources: ["*"],
@@ -88,6 +91,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
     provisionRole.attachInlinePolicy(new iam.Policy(this, 'BedrockStudioProvisionePolicy', {
       statements: [
         new iam.PolicyStatement({
+          sid: "AmazonDataZonePermissionsToCreateEnvironmentRole",
           effect: iam.Effect.ALLOW,
           actions: [
             "iam:CreateRole",
@@ -110,6 +114,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "AmazonDataZonePermissionsToServiceRole",
             effect: iam.Effect.ALLOW,
             actions: [
               "iam:CreateRole",
@@ -151,6 +156,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "IamPassRolePermissionsForBedrock",
             effect: iam.Effect.ALLOW,
             actions: [
               "iam:PassRole"
@@ -170,6 +176,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "AmazonDataZonePermissionsToManageCreatedEnvironmentRole",
             effect: iam.Effect.ALLOW,
             actions: [
               "iam:DeleteRole",
@@ -193,6 +200,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "AmazonDataZoneCFStackCreationForEnvironments",
             effect: iam.Effect.ALLOW,
             actions: [
               "cloudformation:CreateStack",
@@ -212,6 +220,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "AmazonDataZoneCFStackManagementForEnvironments",
             effect: iam.Effect.ALLOW,
             actions: [
               "cloudformation:DeleteStack",
@@ -223,6 +232,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             ]
           }),
           new iam.PolicyStatement({
+            sid: "AmazonDataZoneEnvironmentBedrockGetViaCloudformation",
             effect: iam.Effect.ALLOW,
             actions: [
               "bedrock:GetAgent",
@@ -243,6 +253,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "AmazonDataZoneEnvironmentDeleteGuardrailViaCloudformation",
             effect: iam.Effect.ALLOW,
             actions: [
               "bedrock:DeleteGuardrail"
@@ -257,6 +268,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "AmazonDataZoneEnvironmentBedrockAgentPermissions",
             effect: iam.Effect.ALLOW,
             actions: [
               "bedrock:CreateAgent",
@@ -290,6 +302,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "AmazonDataZoneEnvironmentOpenSearch",
             effect: iam.Effect.ALLOW,
             actions: [
               "aoss:CreateAccessPolicy",
@@ -313,6 +326,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "AmazonDataZoneEnvironmentOpenSearchPermissions",
             effect: iam.Effect.ALLOW,
             actions: [
               "aoss:UpdateCollection",
@@ -334,6 +348,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid:"AmazonDataZoneEnvironmentBedrockKnowledgeBasePermissions",
             effect: iam.Effect.ALLOW,
             actions: [
               "bedrock:CreateKnowledgeBase",
@@ -358,6 +373,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "AmazonDataZoneEnvironmentBedrockGuardrailPermissions",
             effect: iam.Effect.ALLOW,
             actions: [
               "bedrock:CreateGuardrail",
@@ -381,6 +397,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "AmazonDataZoneEnvironmentLambdaPermissions",
             effect: iam.Effect.ALLOW,
             actions: [
               "lambda:AddPermission",
@@ -409,6 +426,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "AmazonDataZoneEnvironmentLambdaManagePermissions",
             effect: iam.Effect.ALLOW,
             actions: [
               "lambda:GetFunction",
@@ -429,6 +447,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "ManageLogGroups",
             effect: iam.Effect.ALLOW,
             actions: [
               "logs:CreateLogGroup",
@@ -446,6 +465,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "ListTags",
             effect: iam.Effect.ALLOW,
             actions: [
               "bedrock:ListTagsForresources",
@@ -462,6 +482,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "AmazonDataZoneEnvironmentTagsCreationPermissions",
             effect: iam.Effect.ALLOW,
             actions: [
               "iam:TagRole",
@@ -495,6 +516,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "AmazonDataZoneEnvironmentBedrockTagResource",
             effect: iam.Effect.ALLOW,
             actions: [
               "bedrock:Tagresources"
@@ -514,6 +536,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "PermissionsToGetAmazonDataZoneEnvironmentBlueprintTemplates",
             effect: iam.Effect.ALLOW,
             actions: [
               "s3:GetObject"
@@ -531,6 +554,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "PermissionsToManageSecrets",
             effect: iam.Effect.ALLOW,
             actions: [
               "secretsmanager:GetRandomPassword"
@@ -545,6 +569,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "PermissionsToStoreSecrets",
             effect: iam.Effect.ALLOW,
             actions: [
               "secretsmanager:CreateSecret",
@@ -567,6 +592,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "AmazonDataZoneManageProjectBuckets",
             effect: iam.Effect.ALLOW,
             actions: [
               "s3:CreateBucket",
@@ -590,6 +616,7 @@ export class ProvisionBedrockStudioStack extends cdk.Stack {
             }
           }),
           new iam.PolicyStatement({
+            sid: "CreateServiceLinkedRoleForOpenSearchServerless",
             effect: iam.Effect.ALLOW,
             actions: ["iam:CreateServiceLinkedRole"],
             resources: ["*"],
