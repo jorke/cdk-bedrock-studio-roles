@@ -1,5 +1,5 @@
 {
-  "name": "provision-bedrock-studio",
+  "name": "cdk-bedrock-studio-roles",
   "version": "0.1.0",
   "bin": {
     "provision-bedrock-studio": "bin/provision-bedrock-studio.js"
